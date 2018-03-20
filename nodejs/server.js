@@ -7,12 +7,32 @@ var qs         = require( 'querystring' );
 var _          = require( 'lodash' );
 var winston    = require( 'winston' );
 var path       = require( 'path' );
-var ini        = require('node-ini');
 
-var config     = ini.parseSync( path.resolve(__dirname, 'config.ini') );
+// var config     = ini.parseSync( path.resolve(__dirname, 'config.ini') );
 
 winston.add( winston.transports.DailyRotateFile, { filename: path.resolve(__dirname, config.log.file) });
 winston.level = config.log.level ;
+
+let config = { 
+  server: { 
+    address: process.env.HOST || '0.0.0.0',        //'0.0.0.0', 
+    port: process.env.PORT || '7788',           //'7788', 
+    path: process.env.QUEUE_PATH || '/channel/comments',     // 
+  },
+  queue: { 
+    name: process.env.QUEUE_NAME || '/queue/matecat_sse_comments',
+    host: process.env.QUEUE_HOST,         // 'http://activemq'
+    port: process.env.QUEUE_PORT || '61613',
+    login: process.env.QUEUE_LOGIN,       // 'login',
+    passcode: process.env.QUEUE_PASSWORD  //'passcode' 
+  },
+  log: {
+    file: process.env.LOG_PATH || 'log/server.log',
+    level: process.env.LOG_LEVEL || 'debug'
+  } 
+};
+
+console.log(config);
 
 var connectOptions = {
     'host': config.queue.host,
